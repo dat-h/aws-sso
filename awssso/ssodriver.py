@@ -117,15 +117,33 @@ class SSODriver():
         return self._driver
 
     def login(self, username, password):
-        el_username = self._find_element_by_id('wdc_username')
-        el_password = self._find_element_by_id('wdc_password')
-        el_signin = self._find_element_by_id('wdc_login_button')
+        try:
+            wait = WebDriverWait(self._driver, 1, poll_frequency=self._poll_frequency).until(EC.presence_of_element_located((By.ID, 'username-input')))
+            el_username = wait.find_element_by_css_selector('div.awsui-input-container > input')
+            el_username.clear()
+            el_username.send_keys(username)
+        except (TimeoutException, NoSuchElementException):
+            pass
+        try:
+            wait_button = WebDriverWait(self._driver, 1, poll_frequency=self._poll_frequency).until(EC.presence_of_element_located((By.ID, 'username-submit-button')))
+            el_username_submit = wait_button.find_element_by_css_selector('button')
+            el_username_submit.click()
+        except (TimeoutException, NoSuchElementException):
+            pass
+        try:
+            wait_password = WebDriverWait(self._driver, 1, poll_frequency=self._poll_frequency).until(EC.presence_of_element_located((By.ID, 'password-input')))
+            el_password = wait_password.find_element_by_css_selector('div.awsui-input-container > input')
+            el_password.clear()
+            el_password.send_keys(password)
+        except (TimeoutException, NoSuchElementException):
+            pass
+        try:
+            wait_password_button = WebDriverWait(self._driver, 1, poll_frequency=self._poll_frequency).until(EC.presence_of_element_located((By.ID, 'password-submit-button')))
+            el_password_submit = wait_password_button.find_element_by_css_selector('button')
+            el_password_submit.click()
+        except (TimeoutException, NoSuchElementException):
+            pass
 
-        el_username.clear()
-        el_username.send_keys(username)
-        el_password.clear()
-        el_password.send_keys(password)
-        el_signin.click()
 
     def check_alert(self):
         try:
