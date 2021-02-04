@@ -75,19 +75,19 @@ class SSODriver():
                 cookies.append(cookie)
         pickle.dump(cookies, open(self._cookie_file, 'wb'))
 
-    def _find_element_by_id(self, element_id, driver=None, timeout=30):
+    def _find_element_by_id(self, element_id, driver=None, timeout=10):
         driver = driver or self._driver
         return WebDriverWait(driver, timeout, poll_frequency=self._poll_frequency).until(
             EC.visibility_of_element_located((By.ID, element_id))
         )
 
-    def _find_element_by_css_selector(self, css_selector, driver=None, timeout=30):
+    def _find_element_by_css_selector(self, css_selector, driver=None, timeout=10):
         driver = driver or self._driver
         return WebDriverWait(driver, timeout, poll_frequency=self._poll_frequency).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, css_selector))
         )
 
-    def _click_element_by_id(self, element_id, driver=None, timeout=30):
+    def _click_element_by_id(self, element_id, driver=None, timeout=10):
         element = self._find_element_by_id(element_id, driver, timeout)
         element.click()
         return element
