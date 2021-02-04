@@ -81,6 +81,12 @@ class SSODriver():
             EC.visibility_of_element_located((By.ID, element_id))
         )
 
+    def _find_element_by_css_selector(self, css_selector, driver=None, timeout=30):
+        driver = driver or self._driver
+        return WebDriverWait(driver, timeout, poll_frequency=self._poll_frequency).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, css_selector))
+        )
+
     def _click_element_by_id(self, element_id, driver=None, timeout=30):
         element = self._find_element_by_id(element_id, driver, timeout)
         element.click()
@@ -158,18 +164,15 @@ class SSODriver():
     def check_mfa(self):
         try:
             wait = WebDriverWait(self._driver, 1, poll_frequency=self._poll_frequency)
-            mfa = wait.until(EC.presence_of_element_located((By.ID, 'mfa_form')))
+            mfa = wait.until(EC.presence_of_element_located((By.TAG_NAME, 'form')))
             raise MFACodeNeeded(mfa)
         except TimeoutException:
             pass
 
     def send_mfa(self, mfa_form, mfacode, trusted_device=True):
-        el_mfacode = self._find_element_by_id('wdc_mfacode', mfa_form)
-        el_mfacheckbox = self._find_element_by_id('wdc_mfacheckbox', mfa_form)
-        el_signin = self._find_element_by_id('wdc_login_button', mfa_form)
+        el_mfacode = self._find_element_by_css_selector('input.awsui-input-type-number', mfa_form)
+        el_signin = self._find_element_by_css_selector('button.awsui-button-variant-primary', mfa_form)
 
         el_mfacode.clear()
         el_mfacode.send_keys(mfacode)
-        if trusted_device:
-            el_mfacheckbox.click()
         el_signin.click()
