@@ -170,7 +170,7 @@ class SSODriver():
             pass
 
     def send_mfa(self, mfa_form, mfacode, trusted_device=True):
-        el_mfacode = self._find_element_by_css_selector('input.awsui-input-type-number', mfa_form)
+        el_mfacode = self._find_element_by_id('awsui-input-0', mfa_form)
         el_signin = self._find_element_by_css_selector('button.awsui-button-variant-primary', mfa_form)
 
         el_mfacode.clear()
